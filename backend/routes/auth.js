@@ -1,12 +1,14 @@
 import express from "express";
 import passport from "passport";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
-import hash from "pbkdf2-password";
 import crypto from "node:crypto";
-import { createUser, getUserByUsername } from "../db.js";
 import { queryResultErrorCode } from "pg-promise/lib/errors/index.js";
+
+import { createUser, getUserByUsername } from "../db.js";
 
 dotenv.config();
 
@@ -96,9 +98,15 @@ router.get("/login", function (req, res) {
 router.post(
   "/login",
   passport.authenticate("local", {
-    successReturnToOrRedirect: "/",
     failureMessage: true,
-  })
+    failureRedirect: "/login",
+  }),
+  function (req, res) {
+    console.log("Login success:", req.user);
+    const user = req.user;
+    const token = jwt.sign(user, "your_jwt_secret");
+    return res.json({ token });
+  }
 );
 
 router.get("/logout", function (req, res) {

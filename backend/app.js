@@ -56,9 +56,7 @@ function restrict(req, res, next) {
   }
 }
 
-app.get("/", function (req, res) {
-  res.redirect("/login");
-});
+app.get("/", function (req, res) {});
 
 app.get("/restricted", restrict, function (req, res) {
   res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');

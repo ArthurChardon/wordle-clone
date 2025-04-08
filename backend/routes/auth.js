@@ -19,7 +19,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: "http://localhost:3000/api/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       console.log("Google profile:", profile, accessToken, refreshToken);
@@ -28,7 +28,11 @@ passport.use(
   )
 );
 passport.use(
-  new LocalStrategy(function verify(username, password, cb) {
+  new LocalStrategy({ session: false }, function verify(
+    username,
+    password,
+    cb
+  ) {
     console.log("LocalStrategy", username, password);
     getUserByUsername(username)
       .then((user) => {
@@ -79,17 +83,34 @@ router.post("/signup", function (req, res) {
       if (err) return res.sendStatus(500);
       createUser(req.body.email, req.body.username, hash.toString("hex"), salt)
         .then(() => {
-          req.session.success = "User signed up successfully!";
           res.redirect("/login");
         })
         .catch((err) => {
           console.error("Error creating user:", err);
-          req.session.error = "Error creating user, please try again.";
           res.redirect("/signup");
         });
     }
   );
 });
+
+const handleSuccessfulAuthentication = (req, res) => {
+  const user = req.user;
+  const username = user.username;
+  const payload = {
+    username: username,
+    expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
+  };
+
+  req.login(payload, { session: false }, (error) => {
+    if (error) {
+      res.status(400).send({ error });
+    }
+    const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
+
+    res.cookie("jwt", token, { httpOnly: true, secure: true });
+    res.status(200).send({ username });
+  });
+};
 
 router.get("/login", function (req, res) {
   res.render("login", { title: "Login" });
@@ -98,33 +119,27 @@ router.get("/login", function (req, res) {
 router.post(
   "/login",
   passport.authenticate("local", {
-    failureMessage: true,
-    failureRedirect: "/login",
+    session: false,
   }),
-  function (req, res) {
-    console.log("Login success:", req.user);
-    const user = req.user;
-    const token = jwt.sign(user, "your_jwt_secret");
-    return res.json({ token });
-  }
+  handleSuccessfulAuthentication
 );
 
-router.get("/logout", function (req, res) {
-  // destroy the user's session to log them out
-  // will be re-created next request
-  req.session.destroy(function () {
-    res.redirect("/");
-  });
-});
+router.get("/logout", function (req, res) {});
 
 router.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false,
+  })
 );
 
 router.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false,
+  }),
   function (req, res) {
     // Successful authentication, redirect home.
     console.log("Google auth success, redirect", req.user);

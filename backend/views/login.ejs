@@ -1,62 +1,61 @@
 <%- include('head', { title: 'Authentication Example' }) -%>
 
     <h1>Login</h1>
-    <%- message %>
-        Try accessing <a href="/restricted">/restricted</a>, then authenticate with "tj" and "foobar".
-        <form method="post" action="/login" rel="noopener" target="_blank">
-            <p>
-                <label for="username">Username:</label>
-                <input type="text" name="username" id="username">
-            </p>
-            <p>
-                <label for="password">Password:</label>
-                <input type="text" name="password" id="password">
-            </p>
-            <p>
-                <input type="submit" value="Login">
-                <a href="/signup">Create account</a>
-            </p>
-        </form>
+    Try accessing <a href="/restricted">/restricted</a>, then authenticate with "tj" and "foobar".
+    <form method="post" action="/api/login">
+        <p>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username">
+        </p>
+        <p>
+            <label for="password">Password:</label>
+            <input type="text" name="password" id="password">
+        </p>
+        <p>
+            <input type="submit" value="Login">
+            <a href="/signup">Create account</a>
+        </p>
+    </form>
 
-        <div className="sso-container">
-            <div className="container">
-                <h1>Welcome to SSO App</h1>
-                <p>Click the button below to sign in with Google:</p>
-                <a href="/auth/google" className="btn">Sign in with Google</a>
-            </div>
+    <div className="sso-container">
+        <div className="container">
+            <h1>Welcome to SSO App</h1>
+            <p>Click the button below to sign in with Google:</p>
+            <a href="/api/auth/google" className="btn">Sign in with Google</a>
         </div>
-        <style>
-            .sso-container {
-                font-family: Arial, sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                background-color: Google #f0f0f0;
-            }
+    </div>
+    <style>
+        .sso-container {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: Google #f0f0f0;
+        }
 
-            .container {
-                text-align: center;
-                background-color: white;
-                padding: 2rem;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-            .btn {
-                display: inline-block;
-                background-color: #4285F4;
-                color: white;
-                padding: 0.5rem 1rem;
-                text-decoration: none;
-                border-radius: 4px;
-                transition: background-color 0.3s;
-            }
+        .btn {
+            display: inline-block;
+            background-color: #4285F4;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
 
-            .btn:hover {
-                background-color: #3367D6;
-            }
-        </style>
+        .btn:hover {
+            background-color: #3367D6;
+        }
+    </style>
 
-        <%- include('foot') -%>
+    <%- include('foot') -%>

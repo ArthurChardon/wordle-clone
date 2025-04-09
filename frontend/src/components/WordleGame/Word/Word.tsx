@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Word.css";
 import { LetterStatus } from "../../../types/words";
 
@@ -6,19 +6,28 @@ export default function Word({
   isEditable = false,
   wordElementId,
   wordTry,
+  validateWord,
 }: {
   isEditable?: boolean;
   wordElementId: string;
   wordTry?: { letter: string; status: LetterStatus }[];
+  validateWord?: (word: string) => void;
 }) {
+  console.log(wordElementId, wordTry);
   const wordLength = 5;
   const [letters, setLetters] = useState<string[]>([]);
-  console.log("aaaa" + wordElementId, letters); //TODO: why refreshed 2 times ?
+  const lettersRef = useRef([...letters]);
+
+  useEffect(() => {
+    lettersRef.current = [...letters];
+  }, [letters]);
 
   useEffect(() => {
     const keyDownEventHandler = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
-        //TODO
+        if (lettersRef.current.length === wordLength && validateWord) {
+          validateWord(lettersRef.current.join(""));
+        }
         return;
       }
       if (event.key === "Backspace") {
@@ -67,9 +76,8 @@ export default function Word({
   };
 
   const getLetterStatusClasses = (index: number) => {
-    if (isEditable || !wordTry) {
-      return;
-    }
+    if (isEditable) return "editable";
+    if (!wordTry) return;
     return "status-" + wordTry[index].status;
   };
 

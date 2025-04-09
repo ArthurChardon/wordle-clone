@@ -13,7 +13,6 @@ export default function Word({
   wordTry?: { letter: string; status: LetterStatus }[];
   validateWord?: (word: string) => void;
 }) {
-  console.log(wordElementId, wordTry);
   const wordLength = 5;
   const [letters, setLetters] = useState<string[]>([]);
   const lettersRef = useRef([...letters]);

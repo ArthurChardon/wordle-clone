@@ -13,10 +13,6 @@ const db = pgp({
   ssl: true,
 });
 
-export function getAllUsers() {
-  return db.any("SELECT * FROM users");
-}
-
 export function getUserById(id) {
   return db.one("SELECT * FROM users WHERE id = $1", [id]);
 }
@@ -45,4 +41,12 @@ export function updateUser(id, email, username, password) {
 
 export function deleteUser(id) {
   return db.none("DELETE FROM users WHERE id = $1", [id]);
+}
+
+export function getWordByDate(date) {
+  return db.one("SELECT * FROM words WHERE date = $1", [date]);
+}
+
+export function createWord(word, date) {
+  return db.none("INSERT INTO words (date, word) VALUES($1, $2)", [date, word]);
 }

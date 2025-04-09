@@ -10,6 +10,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "check-word": "^1.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
@@ -18,7 +19,8 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "pg-promise": "^11.13.0"
+    "pg-promise": "^11.13.0",
+    "random-words": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",

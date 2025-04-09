@@ -4,7 +4,6 @@ const Login = () => {
   const login = async (username: string, password: string) => {
     const api = new WordleCloneApi();
     const response = await api.login(username, password);
-    console.log(response);
   };
 
   return (

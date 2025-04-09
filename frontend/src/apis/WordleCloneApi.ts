@@ -10,4 +10,14 @@ export class WordleCloneApi {
       body: JSON.stringify({ username, password }),
     });
   };
+
+  public submitWord = async (word: string) => {
+    return fetch(`/api/game/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ word }),
+    });
+  };
 }

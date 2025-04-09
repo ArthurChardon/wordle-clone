@@ -2,9 +2,9 @@ import { useState } from "react";
 import { LetterStatus } from "../../types/words";
 import Word from "./Word/Word";
 import "./WordleGame.css";
+import { WordleCloneApi } from "../../apis/WordleCloneApi";
 
 const WordleGame = () => {
-  const theWord = "MUNDO";
   const [tries, setTries] = useState<
     {
       letter: string;
@@ -13,24 +13,25 @@ const WordleGame = () => {
   >(Array(5).fill([]));
   const [editableWordId, setEditableWordId] = useState(0);
 
-  const wordValidated = (word: string) => {
-    const wordTry: { letter: string; status: LetterStatus }[] = [];
-    word.split("").forEach((letter, index) => {
-      console.log(letter, theWord, index);
-      if (letter === theWord[index]) {
-        wordTry.push({ letter, status: LetterStatus.CORRECT });
-        return;
-      }
-      if (theWord.includes(letter)) {
-        wordTry.push({ letter, status: LetterStatus.PRESENT });
-        return;
-      }
-      wordTry.push({ letter, status: LetterStatus.WRONG });
-    });
-    const newTries = [...tries];
-    newTries[editableWordId] = wordTry;
-    setTries(newTries);
-    setEditableWordId(editableWordId < 5 - 1 ? editableWordId + 1 : -1);
+  const wordValidated = async (word: string) => {
+    const api = new WordleCloneApi();
+    const response = await api.submitWord(word);
+    //TODO: handle error cases
+
+    console.log("aaa", response);
+    if (response.status === 406) {
+      console.error("invalid word");
+      return;
+    }
+    if (response.status === 200 || response.status === 201) {
+      const { result } = await response.json();
+      const newTries = [...tries];
+      newTries[editableWordId] = result;
+      setTries(newTries);
+      setEditableWordId(editableWordId < 5 - 1 ? editableWordId + 1 : -1);
+    } else {
+      console.error("error submitting word");
+    }
   };
 
   return (

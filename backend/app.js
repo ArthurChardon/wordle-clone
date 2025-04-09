@@ -6,6 +6,7 @@ import path from "node:path";
 import cors from "cors";
 
 import { router as authRouter } from "./routes/auth.js";
+import { router as wordleRouter } from "./routes/wordle.js";
 
 const __dirname = import.meta.dirname;
 
@@ -23,6 +24,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(passport.initialize());
 
 app.use("/api", authRouter);
+app.use("/api/game", wordleRouter);
 
 passport.serializeUser((user, done) => {
   done(null, user);

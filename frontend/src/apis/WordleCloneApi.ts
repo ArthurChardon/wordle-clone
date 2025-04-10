@@ -20,4 +20,11 @@ export class WordleCloneApi {
       body: JSON.stringify({ word }),
     });
   };
+
+  public getProfile = async () => {
+    return fetch("/api/profile", {
+      method: "GET",
+      credentials: "include",
+    });
+  };
 }

@@ -1,4 +1,5 @@
 .word-letter {
+    position: relative;
     border: 2px solid #d1d5db;
     border-radius: 4px;
     display: inline-flex;
@@ -11,16 +12,80 @@
     padding: 1rem;
     padding-top: 0.85rem;
     user-select: none;
+    overflow: hidden;
 
     &.editable {
         background-color: #ffffff;
     }
 
     &.status-correct {
-        background-color: green;
+        &::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: green;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            box-shadow: 0 0 20px -6px green;
+            animation: rollDown .75s both;
+        }
+
+        &::before {
+            content: "";
+            z-index: 10;
+            position: absolute;
+            height: 200%;
+            width: 200%;
+            top: -120%;
+            left: -100%;
+            background: linear-gradient(transparent 0%,
+                    rgba(255, 255, 255, 0.2) 45%,
+                    rgba(255, 255, 255, 0.7) 50%,
+                    rgba(255, 255, 255, 0.2) 55%,
+                    transparent 100%);
+            transition: all 2s;
+            animation: shine 2s .75s forwards;
+        }
     }
 
     &.status-present {
-        background-color: yellow;
+        &::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: yellow;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            box-shadow: 0 0 20px -6px yellow;
+            animation: rollDown .75s both;
+        }
+    }
+}
+
+@keyframes rollDown {
+    0% {
+        transform: scaleY(0);
+        opacity: 0;
+        transform-origin: 50% 0%;
+    }
+
+    100% {
+        transform: scaleY(1);
+        opacity: 1;
+        transform-origin: 50% 0%;
+    }
+}
+
+@keyframes shine {
+    0% {
+        top: -120%;
+    }
+
+    100% {
+        top: 100%;
     }
 }

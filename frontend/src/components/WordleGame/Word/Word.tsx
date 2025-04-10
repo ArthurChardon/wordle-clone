@@ -92,7 +92,7 @@ export default function Word({
             key={index}
             className={"word-letter " + getLetterStatusClasses(index)}
           >
-            {getLetter(index)}
+            <span className="z-10">{getLetter(index)}</span>
           </div>
         ))}
       </div>

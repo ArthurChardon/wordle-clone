@@ -13,6 +13,8 @@ const db = pgp({
   ssl: true,
 });
 
+// users
+
 export function getUserById(id) {
   return db.one("SELECT * FROM users WHERE id = $1", [id]);
 }
@@ -43,10 +45,25 @@ export function deleteUser(id) {
   return db.none("DELETE FROM users WHERE id = $1", [id]);
 }
 
+// words
+
 export function getWordByDate(date) {
   return db.one("SELECT * FROM words WHERE date = $1", [date]);
 }
 
 export function createWord(word, date) {
   return db.none("INSERT INTO words (date, word) VALUES($1, $2)", [date, word]);
+}
+
+// profiles
+
+export function getProfileByUserId(id) {
+  return db.one("SELECT * FROM profiles WHERE user = $1", [id]);
+}
+
+export function getProfileByUserName(username) {
+  return db.one(
+    "SELECT profiles.successes FROM profiles INNER JOIN users ON users.id=profiles.userId WHERE users.username = $1",
+    [username]
+  );
 }

@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as JwtStrategy } from "passport-jwt";
 import crypto from "node:crypto";
 import { queryResultErrorCode } from "pg-promise/lib/errors/index.js";
 
@@ -13,6 +14,38 @@ import { createUser, getUserByUsername } from "../db.js";
 dotenv.config();
 
 export const router = express.Router();
+
+// Functions
+
+const cookieExtractor = function (req) {
+  let token = null;
+  let headers = req.headers;
+  if (req && headers.cookie) {
+    token = headers.cookie.substr(4);
+  }
+  return token;
+};
+
+const handleSuccessfulAuthentication = (req, res) => {
+  const user = req.user;
+  const username = user.username;
+  const payload = {
+    username: username,
+    expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
+  };
+
+  req.login(payload, { session: false }, (error) => {
+    if (error) {
+      res.status(400).send({ error });
+    }
+    const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
+
+    res.cookie("jwt", token, { httpOnly: true, secure: true });
+    res.status(200).send({ username });
+  });
+};
+
+// Passport strategies
 
 passport.use(
   new GoogleStrategy(
@@ -66,6 +99,32 @@ passport.use(
   })
 );
 
+passport.use(
+  new JwtStrategy(
+    { jwtFromRequest: cookieExtractor, secretOrKey: process.env.JWT_SECRET },
+    function verify(payload, cb) {
+      getUserByUsername(payload.username)
+        .then((user) => {
+          console.log("JwtStrategy user:", user);
+          if (!user) {
+            return cb(null, false, { message: "Incorrect username." });
+          }
+          return cb(null, user);
+        })
+        .catch((err) => {
+          if (err.code === queryResultErrorCode.noData) {
+            console.error("User not found");
+            return cb(null, false, { message: "User not found." });
+          }
+          console.error("Error fetching user:", err);
+          return cb(err);
+        });
+    }
+  )
+);
+
+// Routes
+
 router.get("/signup", function (req, res) {
   res.render("signup", { title: "Sign up" });
 });
@@ -92,25 +151,6 @@ router.post("/signup", function (req, res) {
     }
   );
 });
-
-const handleSuccessfulAuthentication = (req, res) => {
-  const user = req.user;
-  const username = user.username;
-  const payload = {
-    username: username,
-    expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
-  };
-
-  req.login(payload, { session: false }, (error) => {
-    if (error) {
-      res.status(400).send({ error });
-    }
-    const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
-
-    res.cookie("jwt", token, { httpOnly: true, secure: true });
-    res.status(200).send({ username });
-  });
-};
 
 router.get("/login", function (req, res) {
   res.render("login", { title: "Login" });

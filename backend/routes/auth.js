@@ -66,7 +66,7 @@ passport.use(
     password,
     cb
   ) {
-    console.log("LocalStrategy", username, password);
+    console.log("LocalStrategy", username);
     getUserByUsername(username)
       .then((user) => {
         console.log("LocalStrategy user:", user);
@@ -124,6 +124,17 @@ passport.use(
 );
 
 // Routes
+router.get("/auth/check", (req, res) => {
+  const token = cookieExtractor(req);
+  if (!token) return res.status(401).json({ error: "Not authenticated" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ user: decoded });
+  } catch (err) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+});
 
 router.get("/signup", function (req, res) {
   res.render("signup", { title: "Sign up" });
@@ -146,7 +157,6 @@ router.post("/signup", function (req, res) {
         })
         .catch((err) => {
           console.error("Error creating user:", err);
-          res.redirect("/signup");
         });
     }
   );
@@ -160,6 +170,8 @@ router.post(
   "/login",
   passport.authenticate("local", {
     session: false,
+    successRedirect: "/",
+    failureRedirect: "/login",
   }),
   handleSuccessfulAuthentication
 );

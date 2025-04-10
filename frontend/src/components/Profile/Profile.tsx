@@ -15,7 +15,6 @@ const Profile = () => {
   useEffect(() => {
     const api = new WordleCloneApi();
     api.getProfile().then((response) => {
-      console.log("okk", response);
       if (response.status === 401) {
         navigate("/login");
       }

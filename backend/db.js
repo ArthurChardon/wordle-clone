@@ -28,10 +28,16 @@ export function getUserByUsername(username) {
 }
 
 export function createUser(email, username, password, salt) {
-  return db.none(
-    "INSERT INTO users(email, username, hashed_pwd, salt) VALUES($1, $2, $3, $4)",
-    [email, username, password, salt]
-  );
+  return db.tx(async (t) => {
+    const user = await t.one(
+      "INSERT INTO users(email, username, hashed_pwd, salt) VALUES($1, $2, $3, $4) RETURNING id",
+      [email, username, password, salt]
+    );
+    const profile = await t.none(
+      "INSERT INTO profiles(userId, successes) VALUES($1, $2)",
+      [user.id, []]
+    );
+  });
 }
 
 export function updateUser(id, email, username, password) {

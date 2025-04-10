@@ -4,8 +4,15 @@ import "./App.css";
 import WordleGame from "./components/WordleGame/WordleGame";
 import Navbar from "./components/Navbar/Navbar";
 import Profile from "./components/Profile/Profile";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <Navbar></Navbar>

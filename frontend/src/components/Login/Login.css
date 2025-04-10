@@ -1,26 +1,45 @@
-.container-box {
-    box-shadow: var(--shadow-elevation-low);
-}
+.login-box {
+    h2 {
+        margin-bottom: 1rem;
+        user-select: none;
 
-h1 {
-    margin-bottom: 1rem;
+        strong {
+            font-weight: inherit;
+            color: green;
+            transition: color .25s;
 
-    strong {
-        font-weight: inherit;
-        color: green;
-        transition: color .25s;
-
-        &:hover {
-            color: yellow;
+            &:hover {
+                color: yellow;
+            }
         }
+    }
+
+    input {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        font-weight: 600;
+        line-height: 1.5;
     }
 }
 
-input {
-    margin-bottom: 1rem;
+.a-google-signin {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 3px solid #4285f4;
+    color: #4285f4;
+    font-weight: 700;
 }
 
-label {
-    font-weight: 600;
-    line-height: 1.5;
+.a-google-logo {
+    height: 1.2rem;
+    width: 1.2rem;
+    margin-left: .5rem;
+    mask: url("google-logo.svg");
+    background-color: #4285f4;
+    mask-size: 1.2rem;
 }

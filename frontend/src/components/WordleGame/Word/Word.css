@@ -16,7 +16,7 @@
     overflow: hidden;
 
     &.editable {
-        background-color: #ffffff;
+        background-color: #ededed;
     }
 
     &.status-correct {

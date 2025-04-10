@@ -3,3 +3,12 @@ nav img {
     height: 50px;
     object-fit: cover;
 }
+
+.main-title mark {
+    color: yellow;
+    background-color: unset;
+}
+
+.main-title mark:first-child {
+    color: green;
+}

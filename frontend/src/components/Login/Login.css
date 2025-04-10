@@ -1,0 +1,26 @@
+.container-box {
+    box-shadow: var(--shadow-elevation-low);
+}
+
+h1 {
+    margin-bottom: 1rem;
+
+    strong {
+        font-weight: inherit;
+        color: green;
+        transition: color .25s;
+
+        &:hover {
+            color: yellow;
+        }
+    }
+}
+
+input {
+    margin-bottom: 1rem;
+}
+
+label {
+    font-weight: 600;
+    line-height: 1.5;
+}

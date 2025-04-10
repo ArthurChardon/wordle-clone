@@ -1,5 +1,70 @@
 @import "tailwindcss";
 
+@theme {
+  --color-grey-white: #EDEBE9;
+  --color-jet-black: #16161b;
+}
+
+:root {
+  --grey-white: #EDEBE9;
+  --jet-black: #16161b;
+  --shadow-color: 0deg 0% 61%;
+  --shadow-elevation-low:
+    0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
+    0.4px 0.8px 1px -1.2px hsl(var(--shadow-color) / 0.34),
+    1px 2px 2.5px -2.5px hsl(var(--shadow-color) / 0.34);
+  --shadow-elevation-medium: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.36),
+    0.8px 1.6px 2px -0.8px hsl(var(--shadow-color) / 0.36),
+    2.1px 4.1px 5.2px -1.7px hsl(var(--shadow-color) / 0.36),
+    5px 10px 12.6px -2.5px hsl(var(--shadow-color) / 0.36);
+}
+
+h1 {
+  font-family: BalooCheetan2, sans-serif;
+  font-size: 2.6em;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  font-family: BalooCheetan2, sans-serif;
+  font-size: 2em;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+label {
+  color: #16161b;
+}
+
+button {
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 600;
+  font-family: inherit;
+  background-color: var(--jet-black);
+  color: var(--grey-white);
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.25s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+a:focus,
+a:focus-visible,
+input:focus,
+input:focus-visible,
+button:focus,
+button:focus-visible {
+  outline: 2px solid -webkit-focus-ring-color;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"] {

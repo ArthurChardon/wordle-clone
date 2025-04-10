@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 const Profile = () => {
   const updateProfile = async (username: string) => {
     const api = new WordleCloneApi();
+    console.log(api, username);
     //TODO
   };
 

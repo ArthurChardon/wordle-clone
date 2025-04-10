@@ -3,7 +3,7 @@ import { WordleCloneApi } from "../../apis/WordleCloneApi";
 const Login = () => {
   const login = async (username: string, password: string) => {
     const api = new WordleCloneApi();
-    const response = await api.login(username, password);
+    await api.login(username, password);
   };
 
   return (

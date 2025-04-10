@@ -7,7 +7,7 @@ import Profile from "./components/Profile/Profile";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const { loading } = useAuth();
+  const loading = useAuth()?.loading;
 
   if (loading) {
     return <div>Loading...</div>;

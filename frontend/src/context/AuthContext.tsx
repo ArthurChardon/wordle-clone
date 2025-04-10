@@ -1,14 +1,18 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
+interface User {
+  username: string;
+}
+
 const AuthContext = createContext<{
-  user: any;
-  loading: any;
-  login: any;
-  logout: any;
+  user: User | null;
+  loading: boolean;
+  login: (credentials: string) => void;
+  logout: () => void;
 } | null>(null);
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+export function AuthProvider({ children }: any) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +26,7 @@ export function AuthProvider({ children }) {
         const data = await res.json();
         console.log(data);
         setUser(data.user);
-      } catch (err) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -32,8 +36,9 @@ export function AuthProvider({ children }) {
     checkAuth();
   }, []);
 
-  const login = async (credentials) => {
+  const login = async (credentials: string) => {
     // Implementation of login logic
+    console.log(credentials);
   };
 
   const logout = () => {

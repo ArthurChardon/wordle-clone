@@ -3,7 +3,7 @@ import "./Navbar.css";
 import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const { user } = useAuth();
+  const user = useAuth()?.user;
   return (
     <nav className="flex gap-[1rem] p-[1rem] justify-end">
       <Link to="/">

@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Profile from "./components/Profile/Profile";
 import { useAuth } from "./context/AuthContext";
 import Logout from "./components/Logout/Logout";
+import AccountVerified from "./components/AccountVerified/AccountVerified";
 
 function App() {
   const loading = useAuth()?.loading;
@@ -22,6 +23,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/verified" element={<AccountVerified />} />
       </Routes>
     </>
   );

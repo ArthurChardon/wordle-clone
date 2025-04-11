@@ -15,9 +15,13 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   function (req, res) {
     return getProfileByUserName(req.user.username).then((profile) => {
-      return res
-        .status(200)
-        .send({ profile, user: { username: req.user.username } });
+      return res.status(200).send({
+        profile: { successes: profile.successes },
+        user: {
+          username: req.user.username,
+          emailVerified: profile.email_verified,
+        },
+      });
     });
   }
 );

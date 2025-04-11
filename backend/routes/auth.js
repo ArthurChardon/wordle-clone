@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import sgMail from "@sendgrid/mail";
 
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -9,9 +10,15 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 import crypto from "node:crypto";
 import { queryResultErrorCode } from "pg-promise/lib/errors/index.js";
 
-import { createUser, getUserByEmail, getUserByUsername } from "../db.js";
+import {
+  createUser,
+  getUserByEmail,
+  getUserByUsername,
+  verifiesRef,
+} from "../db.js";
 
 dotenv.config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const router = express.Router();
 
@@ -145,12 +152,36 @@ router.post("/signup", function (req, res) {
     "sha256",
     function (err, hash) {
       if (err) return res.sendStatus(500);
-      createUser(req.body.email, req.body.username, hash.toString("hex"), salt)
-        .then(() => {
+      const verificationRef = crypto.randomBytes(16).toString("hex");
+      createUser(
+        req.body.email,
+        req.body.username,
+        hash.toString("hex"),
+        salt,
+        false,
+        verificationRef
+      )
+        .then((a) => {
+          const msg = {
+            to: req.body.email,
+            from: "wordy@arthurchardon.fr",
+            subject: "Verify your Wordy account",
+            text: "Hello there! Please verify your account using this link!",
+            html: `Hello there! Please verify your account using <a clicktracking=off href='${process.env.APP_URL}/api/verify?ref=${verificationRef}'>this link!</a>`,
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Email sent");
+            })
+            .catch((error) => {
+              console.error(error);
+            });
           res.redirect("/login");
         })
         .catch((err) => {
           console.error("Error creating user:", err);
+          res.redirect("/login?error=2");
         });
     }
   );
@@ -204,10 +235,17 @@ router.get(
           if (err.code === queryResultErrorCode.noData) {
             console.error("Google user not found");
             //TODO: verify double username in db!
-            createUser(email, username, "", "");
+            createUser(email, username, "", "", true);
+            setAuthJwtCookie(req, res, { username, email });
             res.redirect("/");
           }
         });
     }
   }
 );
+
+router.get("/verify", (req, res) => {
+  verifiesRef(req.query.ref).then(() => {
+    res.redirect("/verified");
+  });
+});

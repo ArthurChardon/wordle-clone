@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { text } from "express";
 import pgPromise from "pg-promise";
 
 const pgp = pgPromise({});
@@ -31,12 +32,26 @@ export function clearedUsername(username) {
   return db.none("SELECT username FROM users WHERE username = $1", [username]);
 }
 
-export function createUser(email, username, password, salt) {
+export function createUser(
+  email,
+  username,
+  password,
+  salt,
+  emailVerified,
+  verificationRef
+) {
   return db.tx(async (t) => {
     const user = await t.one(
-      "INSERT INTO users(email, username, hashed_pwd, salt) VALUES($1, $2, $3, $4) RETURNING id",
-      [email, username, password, salt]
+      "INSERT INTO users(email, username, hashed_pwd, salt, email_verified) VALUES($1, $2, $3, $4, $5) RETURNING id",
+      [email, username, password, salt, emailVerified, verificationRef]
     );
+    if (verificationRef) {
+      await t.none(
+        "INSERT INTO verifies(userId, verification_ref) VALUES($1, $2)",
+        [user.id, verificationRef]
+      );
+    }
+
     const profile = await t.none(
       "INSERT INTO profiles(userId, successes) VALUES($1, $2)",
       [user.id, []]
@@ -80,7 +95,22 @@ export function getProfileByUserId(id) {
 
 export function getProfileByUserName(username) {
   return db.one(
-    "SELECT profiles.successes FROM profiles INNER JOIN users ON users.id=profiles.userId WHERE users.username = $1",
+    "SELECT profiles.successes, users.email_verified FROM profiles INNER JOIN users ON users.id=profiles.userId WHERE users.username = $1",
     [username]
   );
+}
+
+// verifies
+
+export function verifiesRef(verificationRef) {
+  return db.tx(async (t) => {
+    t.none(
+      "UPDATE users SET email_verified = true FROM verifies WHERE users.id=verifies.userId AND verifies.verification_ref = $1",
+      [verificationRef]
+    );
+
+    await t.none("DELETE FROM verifies WHERE verification_ref = $1", [
+      verificationRef,
+    ]);
+  });
 }

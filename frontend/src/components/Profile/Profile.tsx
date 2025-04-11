@@ -10,15 +10,22 @@ const Profile = () => {
 
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Welcome!");
+  const [successes, setSuccesses] = useState([]);
+  const [verifiedAccount, setVerifiedAccount] = useState(false);
 
   useEffect(() => {
     const api = new WordleCloneApi();
     api.getProfile().then((response) => {
       if (response.status === 401) {
         navigate("/login");
+        return;
       }
+      response.json().then((result) => {
+        setSuccesses(result.profile.successes);
+        setVerifiedAccount(result.user.emailVerified);
+      });
     });
-  });
+  }, []);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -31,8 +38,13 @@ const Profile = () => {
   return (
     <>
       <div className="flex flex-col items-center">
-        <h2>
-          {greeting} at Wordle Clone {user?.username} !
+        <h2 className="text-center">
+          {greeting} at{" "}
+          <span className="font-[Bungee] main-title">
+            W<mark>O</mark>R<mark>D</mark>Y
+          </span>
+          <br></br>
+          {user?.username} !
         </h2>
         <div className="grid grid-cols-2 gap-[1rem]">
           <form
@@ -52,7 +64,18 @@ const Profile = () => {
             <button type="submit">Update profile</button>
           </form>
           <div className="p-[1rem]">
-            <label>You have successfully completed {3} challenges!</label>
+            <div>
+              {verifiedAccount
+                ? "You account is verified."
+                : "Please verify your account."}
+            </div>
+            <div>
+              {successes.length
+                ? "You have successfully completed " +
+                  successes.length +
+                  "challenges!"
+                : "You have not yet completed any challenges."}
+            </div>
           </div>
         </div>
       </div>

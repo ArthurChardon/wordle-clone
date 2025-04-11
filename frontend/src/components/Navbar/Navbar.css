@@ -18,3 +18,12 @@ nav img {
 .main-title mark:first-child {
     color: var(--forest-green);
 }
+
+.main-title-link {
+    letter-spacing: 0rem;
+    transition: letter-spacing .25s;
+
+    &:hover {
+        letter-spacing: -0.1rem;
+    }
+}

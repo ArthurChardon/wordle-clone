@@ -1,9 +1,32 @@
+import { useSearchParams } from "react-router-dom";
 import "./Login.css";
 
+enum LoginError {
+  noError,
+  badLogin,
+  duplicateUser,
+}
+
 const Login = () => {
+  const [searchParams] = useSearchParams();
+  const errorCase = Number(searchParams.get("error") ?? 0);
+
+  const getErrorText = (errorCase: LoginError) => {
+    switch (errorCase) {
+      case LoginError.badLogin:
+        return "Incorrect username or password. Please try again.";
+
+      case LoginError.duplicateUser:
+        return "This username already exists. Please choose another.";
+    }
+  };
+
   return (
     <>
-      <div className="flex items-center w-full justify-center gap-[3rem] grow">
+      <div className="flex items-center w-full justify-center gap-[3rem] grow relative">
+        {errorCase > 0 && (
+          <div className="error-case">{getErrorText(errorCase)}</div>
+        )}
         <div className="containing-box login-box">
           <h2 className="text-jet-black">
             <strong>Log in</strong> to save your progress
@@ -38,7 +61,12 @@ const Login = () => {
           <form method="post" action="/api/signup">
             <div className="flex flex-col">
               <label htmlFor="signup-email">Email:</label>
-              <input type="text" name="email" id="signup-email"></input>
+              <input
+                type="email"
+                autoComplete="on"
+                name="email"
+                id="signup-email"
+              ></input>
             </div>
             <div className="flex flex-col">
               <label htmlFor="signup-username">Username:</label>

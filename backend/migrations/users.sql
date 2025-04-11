@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     hashed_pwd VARCHAR(255) NOT NULL,
     salt VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

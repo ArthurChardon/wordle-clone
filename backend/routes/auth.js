@@ -26,25 +26,6 @@ const cookieExtractor = function (req) {
   return token;
 };
 
-const handleSuccessfulAuthentication = (req, res) => {
-  const user = req.user;
-  const username = user.username;
-  const payload = {
-    username: username,
-    expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
-  };
-
-  req.login(payload, { session: false }, (error) => {
-    if (error) {
-      res.status(400).send({ error });
-    }
-    const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
-
-    res.cookie("jwt", token, { httpOnly: true, secure: true });
-    res.status(200).send({ username });
-  });
-};
-
 // Passport strategies
 
 passport.use(
@@ -84,6 +65,7 @@ passport.use(
             if (user.hashed_pwd !== hash.toString("hex")) {
               return cb(null, false, { message: "Incorrect password." });
             }
+
             return cb(null, user);
           }
         );
@@ -166,17 +148,34 @@ router.get("/login", function (req, res) {
   res.render("login", { title: "Login" });
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    session: false,
-    successRedirect: "/",
-    failureRedirect: "/login",
-  }),
-  handleSuccessfulAuthentication
-);
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.redirect("/login?error=1");
+    const username = user.username;
+    const email = user.email;
+    const payload = {
+      username,
+      email,
+      expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
+    };
 
-router.get("/logout", function (req, res) {});
+    req.login(payload, { session: false }, (error) => {
+      if (error) {
+        res.status(400).send({ error });
+      }
+      const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
+
+      res.cookie("jwt", token, { httpOnly: true, secure: true });
+      return res.redirect("/");
+    });
+  })(req, res, next);
+});
+
+router.post("/logout", function (req, res) {
+  res.clearCookie("jwt");
+  return res.redirect("/");
+});
 
 router.get(
   "/auth/google",

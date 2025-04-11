@@ -5,6 +5,7 @@ import WordleGame from "./components/WordleGame/WordleGame";
 import Navbar from "./components/Navbar/Navbar";
 import Profile from "./components/Profile/Profile";
 import { useAuth } from "./context/AuthContext";
+import Logout from "./components/Logout/Logout";
 
 function App() {
   const loading = useAuth()?.loading;
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<WordleGame />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LetterStatus } from "../../types/words";
 import Word from "./Word/Word";
 import "./WordleGame.css";

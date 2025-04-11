@@ -95,9 +95,16 @@ export function getProfileByUserId(id) {
 
 export function getProfileByUserName(username) {
   return db.one(
-    "SELECT profiles.successes, users.email_verified FROM profiles INNER JOIN users ON users.id=profiles.userId WHERE users.username = $1",
+    "SELECT profiles.id, profiles.successes, users.email_verified FROM profiles INNER JOIN users ON users.id=profiles.userId WHERE users.username = $1",
     [username]
   );
+}
+
+export function updateProfileSuccesses(profileId, successes) {
+  return db.none("UPDATE profiles SET successes = $2 WHERE id = $1", [
+    profileId,
+    successes,
+  ]);
 }
 
 // verifies

@@ -24,7 +24,7 @@ export const router = express.Router();
 
 // Functions
 
-const cookieExtractor = function (req) {
+export const cookieExtractor = function (req) {
   let token = null;
   let headers = req.headers;
   if (req && headers.cookie) {

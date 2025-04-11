@@ -61,19 +61,20 @@ const Profile = () => {
                 defaultValue={user?.username}
               ></input>
             </div>
-            <button type="submit">Update profile</button>
-          </form>
-          <div className="p-[1rem]">
-            <div>
+            <div className="font-bold text-center">
               {verifiedAccount
                 ? "You account is verified."
                 : "Please verify your account."}
             </div>
+            <button type="submit">Update profile</button>
+          </form>
+          <div className="p-[1rem]">
             <div>
               {successes.length
                 ? "You have successfully completed " +
                   successes.length +
-                  "challenges!"
+                  " challenge" +
+                  (successes.length > 1 ? "s!" : "!")
                 : "You have not yet completed any challenges."}
             </div>
           </div>

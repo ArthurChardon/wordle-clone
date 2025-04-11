@@ -8,6 +8,8 @@
 :root {
   --grey-white: #EDEBE9;
   --jet-black: #16161b;
+  --office-green: #05761D;
+  --schoolbus-yellow: #FFDF0E;
   --shadow-color: 0deg 0% 61%;
   --shadow-elevation-low:
     0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),

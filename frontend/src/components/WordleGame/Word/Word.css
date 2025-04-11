@@ -25,11 +25,11 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color: green;
+            background-color: var(--office-green);
             top: 0;
             left: 0;
             z-index: 1;
-            box-shadow: 0 0 20px -6px green;
+            box-shadow: 0 0 20px -6px var(--office-green);
             animation: rollDown .75s both;
         }
 
@@ -57,11 +57,11 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color: yellow;
+            background-color: var(--schoolbus-yellow);
             top: 0;
             left: 0;
             z-index: 1;
-            box-shadow: 0 0 20px -6px yellow;
+            box-shadow: 0 0 20px -6px var(--schoolbus-yellow);
             animation: rollDown .75s both;
         }
     }

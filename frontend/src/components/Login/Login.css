@@ -5,11 +5,11 @@
 
         strong {
             font-weight: inherit;
-            color: green;
+            color: var(--office-green);
             transition: color .25s;
 
             &:hover {
-                color: yellow;
+                color: var(--schoolbus-yellow);
             }
         }
     }

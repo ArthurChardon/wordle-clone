@@ -23,7 +23,7 @@ const Login = () => {
             </div>
             <div className="grid grid-cols-2 gap-[2rem] items-center">
               <button type="submit">Login</button>
-              <a className="a-google-signin" href="/auth/google">
+              <a className="a-google-signin" href="/api/auth/google">
                 Sign in with Google
                 <div className="a-google-logo"></div>
               </a>

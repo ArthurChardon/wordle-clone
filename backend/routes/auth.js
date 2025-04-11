@@ -9,7 +9,7 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 import crypto from "node:crypto";
 import { queryResultErrorCode } from "pg-promise/lib/errors/index.js";
 
-import { createUser, getUserByUsername } from "../db.js";
+import { createUser, getUserByEmail, getUserByUsername } from "../db.js";
 
 dotenv.config();
 
@@ -44,7 +44,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/google/callback",
+      callbackURL:
+        process.env.GOOGLE_REDIRECT_URL_HOST + "/api/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       console.log("Google profile:", profile, accessToken, refreshToken);
@@ -190,8 +191,23 @@ router.get(
     session: false,
   }),
   function (req, res) {
-    // Successful authentication, redirect home.
     console.log("Google auth success, redirect", req.user);
-    res.redirect("/restricted");
+    if (req.user.emails.length) {
+      const username = req.user.displayName;
+      const email = req.user.emails[0].value;
+      getUserByEmail(email)
+        .then(() => {
+          setAuthJwtCookie(req, res, { username, email });
+          res.redirect("/");
+        })
+        .catch((err) => {
+          if (err.code === queryResultErrorCode.noData) {
+            console.error("Google user not found");
+            //TODO: verify double username in db!
+            createUser(email, username, "", "");
+            res.redirect("/");
+          }
+        });
+    }
   }
 );

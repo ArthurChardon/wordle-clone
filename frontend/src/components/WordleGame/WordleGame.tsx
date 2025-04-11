@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LetterStatus } from "../../types/words";
 import Word from "./Word/Word";
 import "./WordleGame.css";
@@ -13,14 +13,33 @@ enum AnswerStatus {
 }
 
 const WordleGame = () => {
+  const triesLocalStorageKey = "wordle-state-tries";
+  const editIdLocalStorageKey = "wordle-state-editId";
   const [tries, setTries] = useState<
     {
       letter: string;
       status: LetterStatus;
     }[][]
-  >(Array(5).fill([]));
-  const [editableWordId, setEditableWordId] = useState(0);
+  >(() => {
+    const stickyValue = window.localStorage.getItem(triesLocalStorageKey);
+    return stickyValue !== null ? JSON.parse(stickyValue) : Array(5).fill([]);
+  });
+
+  const [editableWordId, setEditableWordId] = useState(() => {
+    const stickyValue = window.localStorage.getItem(editIdLocalStorageKey);
+    return stickyValue !== null ? JSON.parse(stickyValue) : 0;
+  });
   const [answerSubmitted, setAnswerSubmitted] = useState(AnswerStatus.None);
+
+  const setNewTries = (tries: { letter: string; status: LetterStatus }[][]) => {
+    setTries(tries);
+    window.localStorage.setItem(triesLocalStorageKey, JSON.stringify(tries));
+  };
+
+  const setNewEditId = (editId: number) => {
+    setEditableWordId(tries);
+    window.localStorage.setItem(editIdLocalStorageKey, JSON.stringify(editId));
+  };
 
   const validateWord = (word: string) => {
     setAnswerSubmitted(AnswerStatus.Wait);
@@ -42,7 +61,7 @@ const WordleGame = () => {
       };
       const newTries = [...tries];
       newTries[editableWordId] = result;
-      setTries(newTries);
+      setNewTries(newTries);
       if (
         result.every(
           (letterResult) => letterResult.status === LetterStatus.CORRECT
@@ -50,21 +69,20 @@ const WordleGame = () => {
       ) {
         console.log("You won!!");
         setAnswerSubmitted(AnswerStatus.Success);
-        setEditableWordId(-1);
+        setNewEditId(-1);
         return;
       }
       if (editableWordId === 5 - 1) {
         console.log("You lost!");
         setAnswerSubmitted(AnswerStatus.Failure);
-        setEditableWordId(-1);
+        setNewEditId(-1);
         return;
       }
-      setEditableWordId(editableWordId + 1);
+      setNewEditId(editableWordId + 1);
     } else {
       console.error("error submitting word");
     }
   };
-  console.log(answerSubmitted, answerSubmitted > 0);
 
   return (
     <>

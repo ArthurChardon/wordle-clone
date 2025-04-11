@@ -27,6 +27,10 @@ export function getUserByUsername(username) {
   return db.one("SELECT * FROM users WHERE username = $1", [username]);
 }
 
+export function clearedUsername(username) {
+  return db.none("SELECT username FROM users WHERE username = $1", [username]);
+}
+
 export function createUser(email, username, password, salt) {
   return db.tx(async (t) => {
     const user = await t.one(
@@ -40,11 +44,18 @@ export function createUser(email, username, password, salt) {
   });
 }
 
-export function updateUser(id, email, username, password) {
-  return db.none(
-    "UPDATE users SET email = $1, username = $2, hashed_pwd = $3 WHERE id = $4",
-    [email, username, password, id]
+export function updateUserUsername(username, newUsername) {
+  return db.one(
+    "UPDATE users SET username = $1 WHERE username = $2 RETURNING username, email",
+    [newUsername, username]
   );
+}
+
+export function updateUserPassword(username, password) {
+  return db.none("UPDATE users SET password = $2 WHERE username = $1", [
+    username,
+    password,
+  ]);
 }
 
 export function deleteUser(id) {

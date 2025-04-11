@@ -26,6 +26,17 @@ const cookieExtractor = function (req) {
   return token;
 };
 
+export const setAuthJwtCookie = function (req, res, { username, email }) {
+  const payload = {
+    username,
+    email,
+    expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
+  };
+
+  const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
+  res.cookie("jwt", token, { httpOnly: true, secure: true });
+};
+
 // Passport strategies
 
 passport.use(
@@ -154,21 +165,8 @@ router.post("/login", (req, res, next) => {
     if (!user) return res.redirect("/login?error=1");
     const username = user.username;
     const email = user.email;
-    const payload = {
-      username,
-      email,
-      expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS),
-    };
-
-    req.login(payload, { session: false }, (error) => {
-      if (error) {
-        res.status(400).send({ error });
-      }
-      const token = jwt.sign(JSON.stringify(payload), process.env.JWT_SECRET);
-
-      res.cookie("jwt", token, { httpOnly: true, secure: true });
-      return res.redirect("/");
-    });
+    setAuthJwtCookie(req, res, { username, email });
+    return res.redirect("/");
   })(req, res, next);
 });
 

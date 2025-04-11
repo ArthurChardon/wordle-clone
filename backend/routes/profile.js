@@ -1,7 +1,12 @@
 import express from "express";
 import passport from "passport";
 
-import { getProfileByUserName } from "../db.js";
+import { setAuthJwtCookie } from "./auth.js";
+import {
+  getProfileByUserName,
+  updateUserUsername,
+  clearedUsername,
+} from "../db.js";
 
 export const router = express.Router();
 
@@ -17,4 +22,24 @@ router.get(
   }
 );
 
-router.get("/edit", function (req, res) {});
+router.post(
+  "/edit",
+  passport.authenticate("jwt", { session: false }),
+  function (req, res) {
+    const newUsername = req.body.username;
+    return clearedUsername(newUsername)
+      .then(() => {
+        return updateUserUsername(req.user.username, newUsername).then(
+          (user) => {
+            const username = user.username;
+            const email = user.username;
+            setAuthJwtCookie(req, res, { username, email });
+            return res.status(200).redirect("/profile");
+          }
+        );
+      })
+      .catch(() => {
+        return res.status(406).redirect("/profile?error=1");
+      });
+  }
+);

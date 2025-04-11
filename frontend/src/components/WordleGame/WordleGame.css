@@ -39,7 +39,7 @@
     }
 
     &.success-answer::after {
-        background: var(--office-green);
+        background: var(--forest-green);
     }
 
     &.information-answer {

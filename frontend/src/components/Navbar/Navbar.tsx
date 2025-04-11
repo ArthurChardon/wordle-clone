@@ -15,20 +15,25 @@ const Navbar = () => {
         </Link>
         <nav className="flex gap-[1rem] justify-end items-center">
           <Link to="/">
-            <img src="letter-w.svg" width="50" height="50"></img>
+            <img src="letter-w.svg" width="50" height="50" alt="home"></img>
           </Link>
           {!user && (
             <Link to="/login">
-              <img src="login.svg" width="50" height="50"></img>
+              <img src="login.svg" width="50" height="50" alt="login"></img>
             </Link>
           )}
           {user && (
             <>
               <Link to="/profile">
-                <img src="person.svg" width="50" height="50"></img>
+                <img
+                  src="person.svg"
+                  width="50"
+                  height="50"
+                  alt="profile"
+                ></img>
               </Link>
               <Link to="/logout">
-                <img src="logout.svg" width="50" height="50"></img>
+                <img src="logout.svg" width="50" height="50" alt="logout"></img>
               </Link>
             </>
           )}

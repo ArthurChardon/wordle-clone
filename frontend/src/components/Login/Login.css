@@ -5,7 +5,7 @@
 
         strong {
             font-weight: inherit;
-            color: var(--office-green);
+            color: var(--forest-green);
             transition: color .25s;
 
             &:hover {

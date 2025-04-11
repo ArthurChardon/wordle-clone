@@ -13,6 +13,7 @@ enum AnswerStatus {
 }
 
 const WordleGame = () => {
+  const maxTries = 6;
   const triesLocalStorageKey = "wordle-state-tries";
   const editIdLocalStorageKey = "wordle-state-editId";
   const [tries, setTries] = useState<
@@ -22,7 +23,9 @@ const WordleGame = () => {
     }[][]
   >(() => {
     const stickyValue = window.localStorage.getItem(triesLocalStorageKey);
-    return stickyValue !== null ? JSON.parse(stickyValue) : Array(5).fill([]);
+    return stickyValue !== null
+      ? JSON.parse(stickyValue)
+      : Array(maxTries).fill([]);
   });
 
   const [editableWordId, setEditableWordId] = useState(() => {
@@ -37,7 +40,7 @@ const WordleGame = () => {
   };
 
   const setNewEditId = (editId: number) => {
-    setEditableWordId(tries);
+    setEditableWordId(editId);
     window.localStorage.setItem(editIdLocalStorageKey, JSON.stringify(editId));
   };
 
@@ -72,7 +75,7 @@ const WordleGame = () => {
         setNewEditId(-1);
         return;
       }
-      if (editableWordId === 5 - 1) {
+      if (editableWordId === maxTries - 1) {
         console.log("You lost!");
         setAnswerSubmitted(AnswerStatus.Failure);
         setNewEditId(-1);

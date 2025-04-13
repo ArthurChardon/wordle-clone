@@ -1,13 +1,13 @@
 export class WordleCloneApi {
   baseURL = import.meta.env.VITE_WORDLE_CLONE_API_URL;
 
-  public submitWord = async (word: string) => {
+  public submitWord = async (word: string, date?: string) => {
     return fetch(`/api/game/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ word }),
+      body: JSON.stringify({ word, date }),
     });
   };
 

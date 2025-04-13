@@ -18,13 +18,14 @@ router.post("/submit", function (req, res, next) {
   const token = cookieExtractor(req);
   if (!req.body) return res.sendStatus(400);
   const date = new Date();
-  const stringifiedDate =
+  let stringifiedDate =
     "" +
     date.getFullYear() +
     "-" +
     (date.getMonth() + 1) +
     "-" +
     date.getDate();
+  if (req.body.date) stringifiedDate = req.body.date;
   const submittedWord = req.body.word;
 
   return getWordByDate(stringifiedDate)

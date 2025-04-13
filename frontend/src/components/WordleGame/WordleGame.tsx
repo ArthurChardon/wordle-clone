@@ -3,6 +3,7 @@ import { LetterStatus } from "../../types/words";
 import Word from "./Word/Word";
 import "./WordleGame.css";
 import { WordleCloneApi } from "../../apis/WordleCloneApi";
+import ForceDate from "./ForceDate/ForceDate";
 
 enum AnswerStatus {
   None = 0,
@@ -51,7 +52,10 @@ const WordleGame = () => {
 
   const wordValidated = async (word: string) => {
     const api = new WordleCloneApi();
-    const response = await api.submitWord(word);
+    const forceDate = window.localStorage.getItem("force-date");
+    let response;
+    if (forceDate) response = await api.submitWord(word, forceDate);
+    else response = await api.submitWord(word);
     setAnswerSubmitted(AnswerStatus.None);
     if (response.status === 406) {
       setAnswerSubmitted(AnswerStatus.Wrong);
@@ -121,7 +125,7 @@ const WordleGame = () => {
             );
           })}
         </div>
-        <div className="">KEYBOARD</div>
+        <ForceDate></ForceDate>
       </div>
     </>
   );

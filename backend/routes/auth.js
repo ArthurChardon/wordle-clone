@@ -218,7 +218,7 @@ router.get(
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: "/login?error=2",
     session: false,
   }),
   function (req, res) {
@@ -228,6 +228,7 @@ router.get(
       const email = req.user.emails[0].value;
       getUserByEmail(email)
         .then(() => {
+          //TODO: if user already registered with email, problem
           setAuthJwtCookie(req, res, { username, email });
           res.redirect("/");
         })

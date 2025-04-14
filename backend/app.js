@@ -27,6 +27,10 @@ app.use("/api", authRouter);
 app.use("/api/game", wordleRouter);
 app.use("/api/profile", profileRouter);
 
+app.get("/*wildcard", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "../frontend/dist", "index.html"));
+});
+
 passport.serializeUser((user, done) => {
   done(null, user);
 });

@@ -32,7 +32,7 @@ router.post("/submit", function (req, res, next) {
     .then((word) => {
       const validEnglishWords = checkWord("en");
       if (
-        word === submittedWord ||
+        word.word === submittedWord ||
         validEnglishWords.check(submittedWord.toLowerCase())
       ) {
         const { success, wordTry } = wordValidation(req.body.word, word.word);

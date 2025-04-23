@@ -1,59 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import "./Word.css";
 import { LetterStatus } from "../../../types/words";
 
-export default function Word({
+const Word = ({
   isEditable = false,
   wordElementId,
+  wordLength,
   wordTry,
-  validateWord,
+  onKeyboardInput,
 }: {
   isEditable?: boolean;
   wordElementId: string;
-  wordTry?: { letter: string; status: LetterStatus }[];
-  validateWord?: (word: string) => void;
-}) {
-  const wordLength = 5;
-  const [letters, setLetters] = useState<string[]>([]);
-  const lettersRef = useRef([...letters]);
-
-  useEffect(() => {
-    lettersRef.current = [...letters];
-  }, [letters]);
-
+  wordLength: number;
+  wordTry: { letter: string; status: LetterStatus }[];
+  onKeyboardInput?: (input: string) => void;
+}) => {
   useEffect(() => {
     const keyDownEventHandler = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        if (lettersRef.current.length === wordLength && validateWord) {
-          validateWord(lettersRef.current.join(""));
-        }
-        return;
+      if (
+        event.key === "Backspace" ||
+        event.key === "Enter" ||
+        (event.key.length === 1 && event.key.match(/[a-zA-Z]/))
+      ) {
+        onKeyboardInput?.(event.key);
       }
-      if (event.key === "Backspace") {
-        popLetter();
-        return;
-      }
-      if (event.key.length === 1 && event.key.match(/[a-zA-Z]/)) {
-        if (letters.length >= wordLength) return;
-        pushLetter(event.key.toUpperCase());
-        return;
-      }
-    };
-
-    const pushLetter = (letter: string) => {
-      setLetters((freshLetters) => {
-        const newLetters = [...freshLetters];
-        newLetters.push(letter);
-        return [...newLetters];
-      });
-    };
-
-    const popLetter = () => {
-      setLetters((freshLetters) => {
-        const newLetters = [...freshLetters];
-        newLetters.pop();
-        return [...newLetters];
-      });
     };
 
     if (isEditable) document.addEventListener("keydown", keyDownEventHandler);
@@ -65,19 +35,12 @@ export default function Word({
   }, [isEditable]);
 
   const getLetter = (index: number) => {
-    if (isEditable) {
-      return letters[index] ?? " ";
-    }
-    if (wordTry) {
-      return wordTry[index]?.letter ?? " ";
-    }
-    return " ";
+    return index < wordTry.length ? wordTry[index].letter : " ";
   };
 
   const getLetterStatusClasses = (index: number) => {
     if (isEditable) return "editable";
-    if (!wordTry) return;
-    return "status-" + wordTry[index].status;
+    return index < wordTry.length ? "status-" + wordTry[index].status : "";
   };
 
   return (
@@ -90,7 +53,9 @@ export default function Word({
         {Array.from({ length: wordLength }, (_, index) => (
           <div
             key={index}
-            className={"word-letter " + getLetterStatusClasses(index)}
+            className={
+              "word-letter wordle-letter " + getLetterStatusClasses(index)
+            }
           >
             <span className="z-10">{getLetter(index)}</span>
           </div>
@@ -98,6 +63,6 @@ export default function Word({
       </div>
     </>
   );
-}
+};
 
-//export default Word;
+export default Word;

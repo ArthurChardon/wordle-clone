@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { LetterStatus } from "../../types/words";
+import { useEffect, useRef, useState } from "react";
+import { TryLetter, LetterStatus } from "../../types/words";
 import Word from "./Word/Word";
 import "./WordleGame.css";
 import { WordleCloneApi } from "../../apis/WordleCloneApi";
 import ForceDate from "./ForceDate/ForceDate";
+import Keyboard from "./Keyboard/Keyboard";
+import Alert from "./Alert/Alert";
 
 enum AnswerStatus {
   None = 0,
@@ -15,28 +17,39 @@ enum AnswerStatus {
 
 const WordleGame = () => {
   const maxTries = 6;
+  const wordLength = 5;
   const triesLocalStorageKey = "wordle-state-tries";
   const editIdLocalStorageKey = "wordle-state-editId";
-  const [tries, setTries] = useState<
-    {
-      letter: string;
-      status: LetterStatus;
-    }[][]
-  >(() => {
+  const validLetters: string[] = [];
+  const presentLetters: string[] = [];
+  const wrongLetters: string[] = [];
+
+  const [tries, setTries] = useState<TryLetter[][]>(() => {
     const stickyValue = window.localStorage.getItem(triesLocalStorageKey);
     return stickyValue !== null
       ? JSON.parse(stickyValue)
       : Array(maxTries).fill([]);
   });
-
   const [editableWordId, setEditableWordId] = useState(() => {
     const stickyValue = window.localStorage.getItem(editIdLocalStorageKey);
     return stickyValue !== null ? JSON.parse(stickyValue) : 0;
   });
   const [answerSubmitted, setAnswerSubmitted] = useState(AnswerStatus.None);
+  const [currentWord, setCurrentWord] = useState<string[]>([]);
+  const [alertMessage, setAlertMessage] = useState<{
+    message: string;
+    status: "success" | "error";
+  } | null>(null);
 
-  const setNewTries = (tries: { letter: string; status: LetterStatus }[][]) => {
+  const currentWordRef = useRef<string[]>([...currentWord]);
+
+  useEffect(() => {
+    currentWordRef.current = [...currentWord];
+  }, [currentWord]);
+
+  const setNewTries = (tries: TryLetter[][]) => {
     setTries(tries);
+    updateValidAndPresentLetters(tries);
     window.localStorage.setItem(triesLocalStorageKey, JSON.stringify(tries));
   };
 
@@ -59,16 +72,18 @@ const WordleGame = () => {
     setAnswerSubmitted(AnswerStatus.None);
     if (response.status === 406) {
       setAnswerSubmitted(AnswerStatus.Wrong);
+      setAlertMessage({ message: "Invalid word", status: "error" });
       console.error("invalid word");
       return;
     }
     if (response.status === 200 || response.status === 201) {
       const { result } = (await response.json()) as {
-        result: { letter: string; status: LetterStatus }[];
+        result: TryLetter[];
       };
       const newTries = [...tries];
       newTries[editableWordId] = result;
       setNewTries(newTries);
+      setCurrentWord([]);
       if (
         result.every(
           (letterResult) => letterResult.status === LetterStatus.CORRECT
@@ -91,9 +106,64 @@ const WordleGame = () => {
     }
   };
 
+  const updateValidAndPresentLetters = (tries: TryLetter[][]) => {
+    tries.forEach((tryLetters) => {
+      tryLetters.forEach((letterResult) => {
+        if (letterResult.status === LetterStatus.WRONG) {
+          wrongLetters.push(letterResult.letter);
+          return;
+        }
+        if (letterResult.status === LetterStatus.CORRECT) {
+          validLetters.push(letterResult.letter);
+          return;
+        }
+        if (letterResult.status === LetterStatus.PRESENT) {
+          presentLetters.push(letterResult.letter);
+        }
+      });
+    });
+  };
+
+  const letterInputTriggered = (letter: string) => {
+    if (letter === "Enter") {
+      if (currentWordRef.current.length === wordLength) {
+        validateWord(currentWordRef.current.join(""));
+      }
+      return;
+    }
+    if (letter === "Backspace") {
+      popLetterInCurrentWord();
+      return;
+    }
+    if (letter.match(/[a-zA-Z]/)) {
+      if (currentWordRef.current.length >= wordLength) return;
+      pushLetterInCurrentWord(letter.toUpperCase());
+      return;
+    }
+  };
+
+  const pushLetterInCurrentWord = (letter: string) => {
+    setCurrentWord((freshLetters) => {
+      const newLetters = [...freshLetters];
+      newLetters.push(letter);
+      return [...newLetters];
+    });
+  };
+
+  const popLetterInCurrentWord = () => {
+    setCurrentWord((freshLetters) => {
+      const newLetters = [...freshLetters];
+      newLetters.pop();
+      return [...newLetters];
+    });
+  };
+
+  updateValidAndPresentLetters(tries);
+
   return (
     <>
-      <div className="flex flex-col items-center p-[2rem] gap-[2rem]">
+      <div className="flex flex-col items-center p-[2rem] gap-[2rem] relative">
+        <Alert alertMessage={alertMessage}></Alert>
         <div className={"words-container containing-box"}>
           <div
             className={
@@ -114,10 +184,18 @@ const WordleGame = () => {
               <Word
                 key={index}
                 wordElementId={index.toString()}
-                wordTry={wordTry.length ? wordTry : undefined}
-                validateWord={
+                wordTry={
                   index === editableWordId
-                    ? (word: string) => validateWord(word)
+                    ? currentWord.map((letter) => ({
+                        letter,
+                        status: LetterStatus.IDLE,
+                      }))
+                    : wordTry
+                }
+                wordLength={wordLength}
+                onKeyboardInput={
+                  index === editableWordId
+                    ? (letter: string) => letterInputTriggered(letter)
                     : undefined
                 }
                 isEditable={index === editableWordId}
@@ -126,6 +204,14 @@ const WordleGame = () => {
           })}
         </div>
         <ForceDate></ForceDate>
+        <Keyboard
+          validLetters={validLetters}
+          presentLetters={presentLetters}
+          wrongLetters={wrongLetters}
+          keyboardLetterClicked={(letter: string) => {
+            letterInputTriggered(letter);
+          }}
+        ></Keyboard>
       </div>
     </>
   );

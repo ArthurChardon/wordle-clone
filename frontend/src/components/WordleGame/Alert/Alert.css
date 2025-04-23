@@ -1,0 +1,43 @@
+.alert-message {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--grey-white);
+    padding: 1rem 2rem;
+    z-index: 1;
+    border-radius: 8px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, .35);
+    animation: alertAnimation 5s ease-in-out forwards;
+
+    &.success {
+        background-color: var(--forest-green);
+    }
+
+    &.error {
+        background-color: var(--engineering-orange);
+    }
+}
+
+@keyframes alertAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+
+}

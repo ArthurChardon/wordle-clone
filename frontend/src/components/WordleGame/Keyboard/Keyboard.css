@@ -1,0 +1,33 @@
+.keyboard-letter {
+    background-color: white;
+    cursor: pointer;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    transition: box-shadow 0.3s, transform 0.1s;
+    animation-fill-mode: both;
+    transform: scale(1);
+
+    &.valid {
+        background-color: var(--forest-green);
+    }
+
+    &.present {
+        background-color: var(--schoolbus-yellow);
+    }
+
+    &.wrong {
+        background-color: var(--grey-white);
+        opacity: 0.9;
+    }
+
+    &:hover {
+        box-shadow: 0 0 6px 0 rgba(0, 0, 0, .35);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    &:focus {
+        outline: none;
+    }
+}

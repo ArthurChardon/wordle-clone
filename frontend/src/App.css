@@ -3,6 +3,7 @@
 @theme {
   --color-grey-white: #EDEBE9;
   --color-jet-black: #16161b;
+  --breakpoint-3xl: 121rem;
 }
 
 :root {

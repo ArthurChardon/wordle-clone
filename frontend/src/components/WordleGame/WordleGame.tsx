@@ -38,7 +38,7 @@ const WordleGame = () => {
   const [currentWord, setCurrentWord] = useState<string[]>([]);
   const [alertMessage, setAlertMessage] = useState<{
     message: string;
-    status: "success" | "error";
+    status: "success" | "info" | "error";
   } | null>(null);
 
   const currentWordRef = useRef<string[]>([...currentWord]);
@@ -67,6 +67,7 @@ const WordleGame = () => {
     const api = new WordleCloneApi();
     const forceDate = window.localStorage.getItem("force-date");
     let response;
+    setAlertMessage(null);
     if (forceDate) response = await api.submitWord(word, forceDate);
     else response = await api.submitWord(word);
     setAnswerSubmitted(AnswerStatus.None);
@@ -98,6 +99,16 @@ const WordleGame = () => {
         console.log("You lost!");
         setAnswerSubmitted(AnswerStatus.Failure);
         setNewEditId(-1);
+        let answer;
+        if (forceDate) answer = await api.getAnswer(forceDate);
+        else answer = await api.getAnswer();
+        const { word } = (await answer.json()) as {
+          word: string;
+        };
+        setAlertMessage({
+          message: "The word was " + word,
+          status: "info",
+        });
         return;
       }
       setNewEditId(editableWordId + 1);
@@ -162,7 +173,7 @@ const WordleGame = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center p-[2rem] gap-[2rem] relative">
+      <div className="flex items-center flex-col p-[2rem] gap-[2rem] relative">
         <Alert alertMessage={alertMessage}></Alert>
         <div className={"words-container containing-box"}>
           <div
@@ -203,15 +214,17 @@ const WordleGame = () => {
             );
           })}
         </div>
-        <ForceDate></ForceDate>
-        <Keyboard
-          validLetters={validLetters}
-          presentLetters={presentLetters}
-          wrongLetters={wrongLetters}
-          keyboardLetterClicked={(letter: string) => {
-            letterInputTriggered(letter);
-          }}
-        ></Keyboard>
+        <div className="max-w-[100vw]">
+          <ForceDate></ForceDate>
+          <Keyboard
+            validLetters={validLetters}
+            presentLetters={presentLetters}
+            wrongLetters={wrongLetters}
+            keyboardLetterClicked={(letter: string) => {
+              letterInputTriggered(letter);
+            }}
+          ></Keyboard>
+        </div>
       </div>
     </>
   );

@@ -3,7 +3,10 @@ import "./Alert.css";
 const Alert = ({
   alertMessage,
 }: {
-  alertMessage: { message: string; status: "success" | "error" } | null;
+  alertMessage: {
+    message: string;
+    status: "success" | "info" | "error";
+  } | null;
 }) => {
   return (
     <>

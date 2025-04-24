@@ -11,6 +11,12 @@ export class WordleCloneApi {
     });
   };
 
+  public getAnswer = async (date?: string) => {
+    return fetch("/api/game/answer" + (date ? `?date=${date}` : ""), {
+      method: "GET",
+    });
+  };
+
   public getProfile = async () => {
     return fetch("/api/profile", {
       method: "GET",

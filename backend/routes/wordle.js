@@ -94,6 +94,25 @@ router.post("/submit", function (req, res, next) {
     });
 });
 
+router.get("/answer", function (req, res, next) {
+  const date = new Date();
+  let stringifiedDate =
+    "" +
+    date.getFullYear() +
+    "-" +
+    (date.getMonth() + 1) +
+    "-" +
+    date.getDate();
+  if (req.query.date) stringifiedDate = req.query.date;
+  return getWordByDate(stringifiedDate)
+    .then((word) => {
+      return res.status(200).send({ word: word.word });
+    })
+    .catch((err) => {
+      return res.status(500).send(err);
+    });
+});
+
 const wordValidation = (submittedWord, referenceWord) => {
   const wordTry = [];
   let success = true;

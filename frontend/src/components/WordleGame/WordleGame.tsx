@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import { TryLetter, LetterStatus } from "../../types/words";
 import Word from "./Word/Word";
 import "./WordleGame.css";
@@ -23,6 +23,8 @@ const WordleGame = () => {
   const validLetters: string[] = [];
   const presentLetters: string[] = [];
   const wrongLetters: string[] = [];
+
+  const mobileTextInput = createRef<HTMLInputElement>();
 
   const [tries, setTries] = useState<TryLetter[][]>(() => {
     const stickyValue = window.localStorage.getItem(triesLocalStorageKey);
@@ -169,13 +171,25 @@ const WordleGame = () => {
     });
   };
 
+  const focusMobileTextInput = () => {
+    if (mobileTextInput.current) {
+      mobileTextInput.current.focus();
+    }
+  };
+
   updateValidAndPresentLetters(tries);
 
   return (
     <>
       <div className="flex items-center flex-col p-[2rem] gap-[2rem] relative">
         <Alert alertMessage={alertMessage}></Alert>
-        <div className={"words-container containing-box"}>
+        <input ref={mobileTextInput} className="mobile-input"></input>
+        <div
+          className={"words-container containing-box"}
+          onClick={() => {
+            focusMobileTextInput();
+          }}
+        >
           <div
             className={
               "interactivity-status" +

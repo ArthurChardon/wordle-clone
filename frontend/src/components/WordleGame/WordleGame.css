@@ -9,6 +9,10 @@
     padding: 2rem;
 }
 
+.mobile-input {
+    visibility: hidden;
+}
+
 .interactivity-status {
     position: absolute;
     width: 100%;

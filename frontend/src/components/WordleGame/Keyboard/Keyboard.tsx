@@ -23,7 +23,7 @@ const Keyboard = ({
   };
 
   return (
-    <div className="flex gap-[.5rem]">
+    <div className="max-sm:hidden sm:flex max-md:flex-col gap-[.5rem] max-md:items-center">
       <div className="flex flex-col items-center gap-[.5rem]">
         {Array.from([firstRow, secondRow, thirdRow]).map((row, index) => (
           <div className="flex gap-[.5rem]" key={index}>
@@ -45,7 +45,7 @@ const Keyboard = ({
           </div>
         ))}
       </div>
-      <div className="flex flex-col gap-[.5rem]">
+      <div className="flex flex-col gap-[.5rem] max-w-[50%] max-md:flex-row">
         <button
           className={"wordle-letter keyboard-letter"}
           tabIndex={0}

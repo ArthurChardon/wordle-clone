@@ -214,7 +214,7 @@ const WordleGame = () => {
             );
           })}
         </div>
-        <div className="max-w-[100vw]">
+        <div className="max-w-[100vw] flex flex-col items-center">
           <ForceDate></ForceDate>
           <Keyboard
             validLetters={validLetters}

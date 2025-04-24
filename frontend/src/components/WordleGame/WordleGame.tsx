@@ -20,6 +20,7 @@ const WordleGame = () => {
   const wordLength = 5;
   const triesLocalStorageKey = "wordle-state-tries";
   const editIdLocalStorageKey = "wordle-state-editId";
+  const dateLocalStorageKey = "wordle-state-date";
   const validLetters: string[] = [];
   const presentLetters: string[] = [];
   const wrongLetters: string[] = [];
@@ -49,10 +50,38 @@ const WordleGame = () => {
     currentWordRef.current = [...currentWord];
   }, [currentWord]);
 
+  useEffect(() => {
+    const date = new Date();
+    const stringifiedDate =
+      "" +
+      date.getFullYear() +
+      "-" +
+      (date.getMonth() + 1) +
+      "-" +
+      date.getDate();
+
+    const stickyValue = window.localStorage.getItem(dateLocalStorageKey);
+    if (stickyValue !== null) {
+      if (stickyValue !== stringifiedDate) {
+        setNewTries(Array(maxTries).fill([]));
+        setNewEditId(0);
+      }
+    }
+  }, []);
+
   const setNewTries = (tries: TryLetter[][]) => {
     setTries(tries);
     updateValidAndPresentLetters(tries);
     window.localStorage.setItem(triesLocalStorageKey, JSON.stringify(tries));
+    const date = new Date();
+    const stringifiedDate =
+      "" +
+      date.getFullYear() +
+      "-" +
+      (date.getMonth() + 1) +
+      "-" +
+      date.getDate();
+    window.localStorage.setItem(dateLocalStorageKey, stringifiedDate);
   };
 
   const setNewEditId = (editId: number) => {

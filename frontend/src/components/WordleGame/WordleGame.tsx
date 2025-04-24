@@ -183,13 +183,17 @@ const WordleGame = () => {
     <>
       <div className="flex items-center flex-col p-[2rem] gap-[2rem] relative">
         <Alert alertMessage={alertMessage}></Alert>
-        <input ref={mobileTextInput} autoFocus className="mobile-input"></input>
         <div
           className={"words-container containing-box"}
           onClick={() => {
             focusMobileTextInput();
           }}
         >
+          <input
+            ref={mobileTextInput}
+            autoFocus
+            className="mobile-input"
+          ></input>
           <div
             className={
               "interactivity-status" +

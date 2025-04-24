@@ -10,7 +10,10 @@
 }
 
 .mobile-input {
-    visibility: hidden;
+    position: absolute;
+    top: 0;
+    z-index: -100;
+    opacity: 0;
 }
 
 .interactivity-status {

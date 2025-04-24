@@ -3,6 +3,7 @@ const ForceDate = () => {
   return (
     <>
       <input
+        style={{ display: "none" }}
         onChange={(event) =>
           window.localStorage.setItem(
             forceDateLocalStorageKey,

@@ -25,7 +25,7 @@ const WordleGame = () => {
   const presentLetters: string[] = [];
   const wrongLetters: string[] = [];
 
-  const mobileTextInput = useRef<HTMLTextAreaElement>(null);
+  const hiddenTryInput = useRef<HTMLTextAreaElement>(null);
 
   const [tries, setTries] = useState<TryLetter[][]>(() => {
     const stickyValue = window.localStorage.getItem(triesLocalStorageKey);
@@ -130,16 +130,6 @@ const WordleGame = () => {
         console.log("You lost!");
         setAnswerSubmitted(AnswerStatus.Failure);
         setNewEditId(-1);
-        let answer;
-        if (forceDate) answer = await api.getAnswer(forceDate);
-        else answer = await api.getAnswer();
-        const { word } = (await answer.json()) as {
-          word: string;
-        };
-        setAlertMessage({
-          message: "The word was " + word,
-          status: "info",
-        });
         return;
       }
       setNewEditId(editableWordId + 1);
@@ -200,9 +190,9 @@ const WordleGame = () => {
     });
   };
 
-  const focusMobileTextInput = () => {
-    if (mobileTextInput.current) {
-      mobileTextInput.current.focus();
+  const focusTextInput = () => {
+    if (hiddenTryInput.current) {
+      hiddenTryInput.current.focus();
     }
   };
 
@@ -226,6 +216,33 @@ const WordleGame = () => {
     }
   };
 
+  const playAgain = () => {
+    setNewTries(Array(maxTries).fill([]));
+    setNewEditId(0);
+    setCurrentWord([]);
+    setAnswerSubmitted(AnswerStatus.None);
+    setAlertMessage(null);
+    window.localStorage.removeItem(triesLocalStorageKey);
+    window.localStorage.removeItem(editIdLocalStorageKey);
+    window.localStorage.removeItem(dateLocalStorageKey);
+    hiddenTryInput.current?.focus();
+  };
+
+  const revealWord = async () => {
+    const api = new WordleCloneApi();
+    let answer;
+    const forceDate = window.localStorage.getItem("force-date");
+    if (forceDate) answer = await api.getAnswer(forceDate);
+    else answer = await api.getAnswer();
+    const { word } = (await answer.json()) as {
+      word: string;
+    };
+    setAlertMessage({
+      message: "The word was " + word,
+      status: "info",
+    });
+  };
+
   updateValidAndPresentLetters(tries);
 
   return (
@@ -235,11 +252,11 @@ const WordleGame = () => {
         <div
           className={"words-container containing-box"}
           onClick={() => {
-            focusMobileTextInput();
+            focusTextInput();
           }}
         >
           <textarea
-            ref={mobileTextInput}
+            ref={hiddenTryInput}
             autoFocus
             className="mobile-input"
             onInput={(event) => {
@@ -279,8 +296,30 @@ const WordleGame = () => {
             );
           })}
         </div>
-        <div className="max-w-[100vw] flex flex-col items-center">
+        <div className="max-w-[100vw] flex flex-col items-center gap-[1rem]">
           <ForceDate></ForceDate>
+          <div className="min-h-[3rem] flex gap-[1rem]">
+            <button
+              className={
+                "play-again " + (editableWordId === -1 ? "" : "hidden")
+              }
+              onClick={() => {
+                playAgain();
+              }}
+            >
+              Clear tries
+            </button>
+            <button
+              className={
+                "reveal-words " + (editableWordId === -1 ? "" : "hidden")
+              }
+              onClick={() => {
+                revealWord();
+              }}
+            >
+              Reveal word
+            </button>
+          </div>
           <Keyboard
             validLetters={validLetters}
             presentLetters={presentLetters}

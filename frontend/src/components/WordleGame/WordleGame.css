@@ -7,6 +7,7 @@
     align-items: center;
     gap: 1rem;
     padding: 2rem;
+    cursor: pointer;
 }
 
 .mobile-input {
@@ -63,6 +64,17 @@
     }
 }
 
+.play-again {
+    background-color: var(--forest-green);
+    transform-origin: 50% 0;
+    animation: blurredInLeft .5s;
+}
+
+.reveal-words {
+    transform-origin: 50% 0;
+    animation: blurredInRight .5s;
+}
+
 @keyframes rotate1Turn {
     0% {
         transform: rotate(0);
@@ -74,5 +86,33 @@
 
     100% {
         transform: rotate(1turn);
+    }
+}
+
+@keyframes blurredInLeft {
+    0% {
+        opacity: 0;
+        filter: blur(40px);
+        transform: translateX(-300%) scaleY(2.5) scaleX(.2);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateX(0) scaleY(1) scaleX(1);
+    }
+}
+
+@keyframes blurredInRight {
+    0% {
+        opacity: 0;
+        filter: blur(40px);
+        transform: translateX(300%) scaleY(2.5) scaleX(.2);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateX(0) scaleY(1) scaleX(1);
     }
 }

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-grey-white: #EDEBE9;
+  --color-grey-white: #f8f8ff;
   --color-jet-black: #16161b;
   --breakpoint-3xl: 121rem;
 }
 
 :root {
-  --grey-white: #EDEBE9;
+  --grey-white: #f8f8ff;
   --jet-black: #16161b;
   --forest-green: #068922;
   --schoolbus-yellow: #FFDF0E;

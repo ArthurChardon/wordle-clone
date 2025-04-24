@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import "./Word.css";
 import { LetterStatus } from "../../../types/words";
 
@@ -7,33 +6,12 @@ const Word = ({
   wordElementId,
   wordLength,
   wordTry,
-  onKeyboardInput,
 }: {
   isEditable?: boolean;
   wordElementId: string;
   wordLength: number;
   wordTry: { letter: string; status: LetterStatus }[];
-  onKeyboardInput?: (input: string) => void;
 }) => {
-  useEffect(() => {
-    const keyDownEventHandler = (event: KeyboardEvent) => {
-      if (
-        event.key === "Backspace" ||
-        event.key === "Enter" ||
-        (event.key.length === 1 && event.key.match(/[a-zA-Z]/))
-      ) {
-        onKeyboardInput?.(event.key);
-      }
-    };
-
-    if (isEditable) document.addEventListener("keydown", keyDownEventHandler);
-    else document.removeEventListener("keydown", keyDownEventHandler);
-
-    return () => {
-      document.removeEventListener("keydown", keyDownEventHandler);
-    };
-  }, [isEditable]);
-
   const getLetter = (index: number) => {
     return index < wordTry.length ? wordTry[index].letter : " ";
   };

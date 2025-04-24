@@ -24,7 +24,7 @@ const WordleGame = () => {
   const presentLetters: string[] = [];
   const wrongLetters: string[] = [];
 
-  const mobileTextInput = useRef<HTMLInputElement>(null);
+  const mobileTextInput = useRef<HTMLTextAreaElement>(null);
 
   const [tries, setTries] = useState<TryLetter[][]>(() => {
     const stickyValue = window.localStorage.getItem(triesLocalStorageKey);
@@ -177,6 +177,26 @@ const WordleGame = () => {
     }
   };
 
+  const handleKeyboardInput = (event: InputEvent) => {
+    if (event.inputType === "insertText" && event.data) {
+      if (event.data.match(/[a-zA-Z]/)) {
+        if (currentWordRef.current.length >= wordLength) return;
+        pushLetterInCurrentWord(event.data.toUpperCase());
+      }
+      return;
+    }
+    if (event.inputType === "insertLineBreak") {
+      if (currentWordRef.current.length === wordLength) {
+        validateWord(currentWordRef.current.join(""));
+      }
+      return;
+    }
+    if (event.inputType === "deleteContentBackward") {
+      popLetterInCurrentWord();
+      return;
+    }
+  };
+
   updateValidAndPresentLetters(tries);
 
   return (
@@ -189,11 +209,14 @@ const WordleGame = () => {
             focusMobileTextInput();
           }}
         >
-          <input
+          <textarea
             ref={mobileTextInput}
             autoFocus
             className="mobile-input"
-          ></input>
+            onInput={(event) => {
+              handleKeyboardInput(event.nativeEvent as InputEvent);
+            }}
+          />
           <div
             className={
               "interactivity-status" +
@@ -222,11 +245,6 @@ const WordleGame = () => {
                     : wordTry
                 }
                 wordLength={wordLength}
-                onKeyboardInput={
-                  index === editableWordId
-                    ? (letter: string) => letterInputTriggered(letter)
-                    : undefined
-                }
                 isEditable={index === editableWordId}
               ></Word>
             );

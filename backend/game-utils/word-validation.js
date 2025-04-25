@@ -1,4 +1,4 @@
-const wordValidation = (submittedWord, referenceWord) => {
+export const wordValidation = (submittedWord, referenceWord) => {
   const wordTry = [];
   const validLettersCount = new Map();
   referenceWord.split("").forEach((letter) => {
@@ -55,5 +55,3 @@ const wordValidation = (submittedWord, referenceWord) => {
   });
   return { wordTry, success };
 };
-
-module.exports = { wordValidation };

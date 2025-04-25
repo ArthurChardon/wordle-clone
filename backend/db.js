@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { text } from "express";
 import pgPromise from "pg-promise";
 
 const pgp = pgPromise({});

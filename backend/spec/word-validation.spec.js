@@ -1,7 +1,7 @@
-const { wordValidation } = require("../game-utils/word-validation");
+import { wordValidation } from "../game-utils/word-validation.js";
 
 describe("wordValidation unique letters: LEGIT", () => {
-  test("wordValidation LEGIT LEGIT", () => {
+  it("wordValidation LEGIT LEGIT", () => {
     expect(wordValidation("LEGIT", "LEGIT")).toEqual({
       wordTry: [
         { letter: "L", status: "correct" },
@@ -14,7 +14,7 @@ describe("wordValidation unique letters: LEGIT", () => {
     });
   });
 
-  test("wordValidation MAGIC LEGIT", () => {
+  it("wordValidation MAGIC LEGIT", () => {
     expect(wordValidation("MAGIC", "LEGIT")).toEqual({
       wordTry: [
         { letter: "M", status: "wrong" },
@@ -27,7 +27,7 @@ describe("wordValidation unique letters: LEGIT", () => {
     });
   });
 
-  test("wordValidation TALES LEGIT", () => {
+  it("wordValidation TALES LEGIT", () => {
     expect(wordValidation("TALES", "LEGIT")).toEqual({
       wordTry: [
         { letter: "T", status: "present" },
@@ -42,7 +42,7 @@ describe("wordValidation unique letters: LEGIT", () => {
 });
 
 describe("wordValidation with duplicates: EAGLE", () => {
-  test("wordValidation EAGLE EAGLE", () => {
+  it("wordValidation EAGLE EAGLE", () => {
     expect(wordValidation("EAGLE", "EAGLE")).toEqual({
       wordTry: [
         { letter: "E", status: "correct" },
@@ -55,7 +55,7 @@ describe("wordValidation with duplicates: EAGLE", () => {
     });
   });
 
-  test("wordValidation LEGAL EAGLE", () => {
+  it("wordValidation LEGAL EAGLE", () => {
     expect(wordValidation("LEGAL", "EAGLE")).toEqual({
       wordTry: [
         { letter: "L", status: "present" },
@@ -68,7 +68,7 @@ describe("wordValidation with duplicates: EAGLE", () => {
     });
   });
 
-  test("wordValidation LEETS EAGLE", () => {
+  it("wordValidation LEETS EAGLE", () => {
     expect(wordValidation("LEETS", "EAGLE")).toEqual({
       wordTry: [
         { letter: "L", status: "present" },
@@ -81,7 +81,7 @@ describe("wordValidation with duplicates: EAGLE", () => {
     });
   });
 
-  test("wordValidation EEEEE EAGLE", () => {
+  it("wordValidation EEEEE EAGLE", () => {
     expect(wordValidation("EEEEE", "EAGLE")).toEqual({
       wordTry: [
         { letter: "E", status: "correct" },
@@ -94,7 +94,7 @@ describe("wordValidation with duplicates: EAGLE", () => {
     });
   });
 
-  test("wordValidation DEEED EAGLE", () => {
+  it("wordValidation DEEED EAGLE", () => {
     expect(wordValidation("DEEED", "EAGLE")).toEqual({
       wordTry: [
         { letter: "D", status: "wrong" },

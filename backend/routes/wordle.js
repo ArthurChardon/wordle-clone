@@ -11,6 +11,7 @@ import {
   getProfileByUserName,
 } from "../db.js";
 import { cookieExtractor } from "./auth.js";
+import { wordValidation } from "../game-utils/word-validation.js";
 
 export const router = express.Router();
 
@@ -112,22 +113,3 @@ router.get("/answer", function (req, res, next) {
       return res.status(500).send(err);
     });
 });
-
-const wordValidation = (submittedWord, referenceWord) => {
-  const wordTry = [];
-  let success = true;
-  submittedWord.split("").forEach((letter, index) => {
-    if (letter === referenceWord[index]) {
-      wordTry.push({ letter, status: "correct" });
-      return;
-    }
-    if (referenceWord.includes(letter)) {
-      success = false;
-      wordTry.push({ letter, status: "present" });
-      return;
-    }
-    success = false;
-    wordTry.push({ letter, status: "wrong" });
-  });
-  return { wordTry, success };
-};

@@ -17,7 +17,7 @@
     }
 
     &.wrong {
-        background-color: var(--grey-white);
+        background-color: grey;
         opacity: 0.9;
     }
 
